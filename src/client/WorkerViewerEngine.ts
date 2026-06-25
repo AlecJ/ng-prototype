@@ -18,6 +18,10 @@ export class WorkerViewerEngine implements ViewerEngine {
   private attached = false;
   private disposed = false;
 
+  get isDisposed(): boolean {
+    return this.disposed;
+  }
+
   constructor() {
     this.worker.addEventListener("message", (event: MessageEvent<WorkerResponse>) => {
       this.emit(workerResponseToViewerEvent(event.data));
@@ -43,7 +47,10 @@ export class WorkerViewerEngine implements ViewerEngine {
   }
 
   async setSource(sourceInput: string): Promise<void> {
-    if (this.disposed) return;
+    if (this.disposed) {
+      this.emit({ type: "error", message: "Viewer engine has been disposed." });
+      return;
+    }
     try {
       const source = normalizePrecomputedSource(sourceInput);
       const response = await fetch(source.infoUrl);

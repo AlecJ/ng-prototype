@@ -29,7 +29,12 @@ type LoadState =
 
 export function App() {
   const initial = parseUrlState();
-  const engine = useMemo(() => new WorkerViewerEngine(), []);
+  const engineRef = useRef<WorkerViewerEngine | undefined>(undefined);
+  const disposeTimerRef = useRef<number | undefined>(undefined);
+  if (!engineRef.current || engineRef.current.isDisposed) {
+    engineRef.current = new WorkerViewerEngine();
+  }
+  const engine = engineRef.current;
   const [source, setSource] = useState(initial?.source || sampleSource);
   const [center, setCenter] = useState<Vec3>(initial?.center ?? [0, 0, 0]);
   const [zoom, setZoom] = useState(initial?.zoom ?? 1);
@@ -71,7 +76,18 @@ export function App() {
     });
   }, [engine]);
 
-  useEffect(() => () => engine.dispose(), [engine]);
+  useEffect(() => {
+    if (disposeTimerRef.current !== undefined) {
+      window.clearTimeout(disposeTimerRef.current);
+      disposeTimerRef.current = undefined;
+    }
+    return () => {
+      disposeTimerRef.current = window.setTimeout(() => {
+        engine.dispose();
+        if (engineRef.current === engine) engineRef.current = undefined;
+      }, 0);
+    };
+  }, [engine]);
 
   useEffect(() => {
     replaceUrlState({ source, center, zoom });
