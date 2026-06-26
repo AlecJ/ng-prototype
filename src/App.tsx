@@ -18,7 +18,7 @@ import type {
 import { SettingsPanel } from "./settings/SettingsPanel";
 import { ViewportCanvas } from "./viewer/ViewportCanvas";
 
-const sampleSource = "gs://neuroglancer-janelia-flyem-hemibrain/emdata/clahe_yz/jpeg/|neuroglancer-precomputed:";
+const sampleSource = "gs://neuroglancer-public-data/flyem_fib-25/image";
 const canvasCssSize = { width: 960, height: 640 };
 
 type LoadState =
