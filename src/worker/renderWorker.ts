@@ -81,7 +81,7 @@ async function updateVisibleChunks(): Promise<void> {
 	const chunksByKey = new Map(
 		selection.chunks.map((chunk) => [chunk.key, chunk]),
 	);
-	await scheduler.drain(async (key) => {
+	scheduler.drain(async (key) => {
 		const chunk = chunksByKey.get(key);
 		if (!chunk || !source) return;
 		if (chunk.scale.sharding) {
