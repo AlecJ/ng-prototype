@@ -93,6 +93,13 @@ export function App() {
     replaceUrlState({ source, center, zoom });
   }, [source, center, zoom]);
 
+  useEffect(() => {
+    if (initial?.source) {
+      loadSource();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function loadSource(event?: React.FormEvent<HTMLFormElement>) {
     event?.preventDefault();
     if (source.trim().length === 0) {
